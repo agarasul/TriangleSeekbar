@@ -1,5 +1,6 @@
 package az.rasul.myapplication
 
+import android.graphics.Color
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -15,8 +16,7 @@ class MainActivity : AppCompatActivity() {
             Toast.makeText(this, it.toString(), Toast.LENGTH_SHORT).show()
         }
         button.setOnClickListener {
-            val num = editText.text.toString().toFloat()
-            seekbar.setProgress(num)
+            seekbar.setSeekBarColor(Color.CYAN)
         }
     }
 }

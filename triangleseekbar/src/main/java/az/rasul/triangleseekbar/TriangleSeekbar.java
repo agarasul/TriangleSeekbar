@@ -6,9 +6,13 @@ import android.graphics.*;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+import androidx.annotation.ColorRes;
+import androidx.core.content.ContextCompat;
 import com.rasul.triangleseekbar.R;
 
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.Locale;
 
 public class TriangleSeekbar extends View implements View.OnTouchListener {
 
@@ -22,16 +26,17 @@ public class TriangleSeekbar extends View implements View.OnTouchListener {
 
 
     ProgressListener mProgressListener;
+    private DecimalFormatSymbols decimalFormatSymbols = new DecimalFormatSymbols(Locale.GERMAN);
 
-    private DecimalFormat df = new DecimalFormat("#.##");
+    private DecimalFormat df = new DecimalFormat("#.##", decimalFormatSymbols);
+
 
     private int mHeight = 0;
     private int mWidth = 0;
 
-    private float mSeekbarArea = 0f;
-    private double mLoadedHeight = 0D;
+    private int mLoadedHeight = 0;
 
-    private double mLoadedWidth = 0D;
+    private int mLoadedWidth = 0;
 
     private float mProgressX = 0f;
     private float mProgressY = 0f;
@@ -48,8 +53,10 @@ public class TriangleSeekbar extends View implements View.OnTouchListener {
     private int mSeekbarColor;
     private int mSeekbarLoadingColor;
 
+    private boolean mIsProgressVisible = false;
 
     private String mFontName;
+
     private float mFontSize = 96f;
 
     private float percentage = 0.0f;
@@ -57,35 +64,41 @@ public class TriangleSeekbar extends View implements View.OnTouchListener {
 
     public TriangleSeekbar(Context context) {
         super(context);
+        decimalFormatSymbols.setDecimalSeparator('.');
+        df.setDecimalFormatSymbols(decimalFormatSymbols);
         setOnTouchListener(this);
     }
 
     public TriangleSeekbar(Context context, AttributeSet attrs) {
         super(context, attrs);
+        decimalFormatSymbols.setDecimalSeparator('.');
+        df.setDecimalFormatSymbols(decimalFormatSymbols);
         setOnTouchListener(this);
 
-        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.MySeekbar);
+        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.TriangleSeekbar);
 
         mSeekbarColor =
-                typedArray.getColor(R.styleable.MySeekbar_seekbarColor, getResources().getColor(R.color.seekbarPrimary));
+                typedArray.getColor(R.styleable.TriangleSeekbar_seekbarColor, getResources().getColor(R.color.seekbarPrimary));
         mSeekbarLoadingColor =
                 typedArray.getColor(
-                        R.styleable.MySeekbar_seekbarLoadingColor,
+                        R.styleable.TriangleSeekbar_seekbarLoadingColor,
                         getResources().getColor(R.color.seekbarPrimaryDark)
                 );
 
         mTextColor =
                 typedArray.getColor(
-                        R.styleable.MySeekbar_textColor,
+                        R.styleable.TriangleSeekbar_textColor,
                         Color.BLACK
                 );
 
 
-        mProgressPosition = Position.values()[(typedArray.getInt(R.styleable.MySeekbar_progressTextPosition, 4))];
-        mFontSize = typedArray.getDimension(R.styleable.MySeekbar_textFontSize, 96f);
-        mFontName = typedArray.getString(R.styleable.MySeekbar_textFontName);
+        mIsProgressVisible = typedArray.getBoolean(R.styleable.TriangleSeekbar_showProgress, false);
 
-        percentage = typedArray.getFloat(R.styleable.MySeekbar_progress, 0f);
+        mProgressPosition = Position.values()[(typedArray.getInt(R.styleable.TriangleSeekbar_progressTextPosition, 4))];
+        mFontSize = typedArray.getDimension(R.styleable.TriangleSeekbar_textFontSize, 96f);
+        mFontName = typedArray.getString(R.styleable.TriangleSeekbar_textFontName);
+
+        percentage = typedArray.getFloat(R.styleable.TriangleSeekbar_progress, 0f);
 
         mSeekbarPaint.setColor(mSeekbarColor);
         mSeekbarLoadingPaint.setColor(mSeekbarLoadingColor);
@@ -107,7 +120,6 @@ public class TriangleSeekbar extends View implements View.OnTouchListener {
         super.onSizeChanged(w, h, oldw, oldh);
         mHeight = h;
         mWidth = w;
-        mSeekbarArea = h * w;
 
         mSeekbarPath.moveTo(mWidth, 0);
         mSeekbarPath.lineTo(mWidth, mHeight);
@@ -143,8 +155,8 @@ public class TriangleSeekbar extends View implements View.OnTouchListener {
         double sinA = mHeight / hypotenuse;
         double cosA = Math.sqrt((1 - (sinA * sinA)));
         hypotenuse = motionX / cosA;
-        mLoadedHeight = hypotenuse * sinA;
-        mLoadedWidth = motionX;
+        mLoadedHeight = (int) Math.round(hypotenuse * sinA);
+        mLoadedWidth = Math.round(motionX);
         mSeekbarLoadingPath.moveTo(0f, mHeight);
 
         mSeekbarLoadingPath.lineTo((float) mLoadedWidth, mHeight);
@@ -153,7 +165,9 @@ public class TriangleSeekbar extends View implements View.OnTouchListener {
         percentage = getPercentage();
 
         if (mProgressListener != null) {
-            mProgressListener.onProgressChange(percentage);
+            String aa = df.format(percentage);
+
+            mProgressListener.onProgressChange(Float.parseFloat(aa));
         }
 
         setProgressPosition(mProgressPosition);
@@ -163,7 +177,7 @@ public class TriangleSeekbar extends View implements View.OnTouchListener {
     private void setProgressPosition(Position position) {
         Rect bounds = new Rect();
 
-        String text = "${percentage.toInt()} % ";
+        String text = "" + Math.round(percentage) + " % ";
         mTextPaint.getTextBounds(text, 0, text.length(), bounds);
 
         switch (position) {
@@ -194,14 +208,33 @@ public class TriangleSeekbar extends View implements View.OnTouchListener {
                 mProgressY = mHeight / 1.25f;
                 break;
         }
+        invalidate();
+    }
+
+
+    public void setTextColor(int color) {
+        this.mTextColor = color;
+        mTextPaint.setColor(mTextColor);
+        invalidate();
+    }
+
+    public void setSeekBarColor(int color) {
+        this.mSeekbarColor = color;
+        mSeekbarPaint.setColor(mSeekbarColor);
+        invalidate();
+    }
+
+    public void setSeekbarLoadingColor(int color) {
+        this.mSeekbarLoadingColor = color;
+        mSeekbarLoadingPaint.setColor(mSeekbarLoadingColor);
+        invalidate();
     }
 
 
     private float getPercentage() {
-        double loadedArea = (mLoadedHeight * mLoadedWidth) / 2;
-        int fullArea = ((mHeight * mWidth) / 2);
-        double percent = (loadedArea / fullArea) * 100f;
-        return Float.parseFloat(df.format(percent));
+        double loadedArea = (mLoadedHeight * mLoadedWidth);
+        int fullArea = (mHeight * mWidth);
+        return (float) ((loadedArea / fullArea) * 100f);
     }
 
 
@@ -221,14 +254,12 @@ public class TriangleSeekbar extends View implements View.OnTouchListener {
         super.onDraw(canvas);
         canvas.drawPath(mSeekbarPath, mSeekbarPaint);
         canvas.drawPath(mSeekbarLoadingPath, mSeekbarLoadingPaint);
-        canvas.drawText((int) percentage + " % ", mProgressX, mProgressY, mTextPaint);
+        if (mIsProgressVisible) {
+            canvas.drawText((int) percentage + " % ", mProgressX, mProgressY, mTextPaint);
+        }
 
     }
 
-
-    public ProgressListener getmProgressListener() {
-        return mProgressListener;
-    }
 
     public void setmProgressListener(ProgressListener mProgressListener) {
         this.mProgressListener = mProgressListener;
