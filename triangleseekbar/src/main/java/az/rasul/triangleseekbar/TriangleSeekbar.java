@@ -16,16 +16,16 @@ import java.util.Locale;
 
 public class TriangleSeekbar extends View implements View.OnTouchListener {
 
-    enum Position {
+    public enum Position {
         TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT, CENTER
     }
 
-    interface ProgressListener {
+    public interface ProgressListener {
         void onProgressChange(float progress);
     }
 
 
-    ProgressListener mProgressListener;
+    private ProgressListener mProgressListener;
     private DecimalFormatSymbols decimalFormatSymbols = new DecimalFormatSymbols(Locale.GERMAN);
 
     private DecimalFormat df = new DecimalFormat("#.##", decimalFormatSymbols);
