@@ -8,6 +8,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import com.rasul.triangleseekbar.R;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Locale;
@@ -173,7 +175,7 @@ public class TriangleSeekbar extends View implements View.OnTouchListener {
         percentage = calculatePercentage();
 
         if (mProgressListener != null) {
-            mProgressListener.onProgressChange(percentage);
+            mProgressListener.onProgressChange(Math.round(percentage));
         }
 
         setProgressPosition(mProgressPosition);
@@ -225,7 +227,6 @@ public class TriangleSeekbar extends View implements View.OnTouchListener {
     }
 
 
-
     public TriangleSeekbar setProgress(float progress) {
         if (progress >= 0.0 && progress <= 1.0) {
             double newWidth = mWidth * Math.sqrt(progress);
@@ -236,6 +237,7 @@ public class TriangleSeekbar extends View implements View.OnTouchListener {
         }
         return this;
     }
+
     public float getPercentage() {
         return percentage;
     }
@@ -278,6 +280,7 @@ public class TriangleSeekbar extends View implements View.OnTouchListener {
 
     public void setProgressVisible(boolean mIsProgressVisible) {
         this.mIsProgressVisible = mIsProgressVisible;
+        invalidate();
     }
 
 
@@ -287,6 +290,7 @@ public class TriangleSeekbar extends View implements View.OnTouchListener {
 
     public void setTextSize(float mTextSize) {
         this.mTextSize = mTextSize;
+        invalidate();
     }
 
     public void setProgressListener(ProgressListener mProgressListener) {

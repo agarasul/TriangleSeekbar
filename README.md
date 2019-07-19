@@ -4,6 +4,8 @@ It's simple lightweight Triangle Seekbar library
 
 ![Triangle Seekbar Demo](triangleseekbar.gif)
 
+[![](https://jitpack.io/v/agarasul/TriangleSeekbar.svg)](https://jitpack.io/#agarasul/TriangleSeekbar)
+
 
 ### Attributes that you can change
 

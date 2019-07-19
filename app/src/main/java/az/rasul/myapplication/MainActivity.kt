@@ -1,10 +1,10 @@
 package az.rasul.myapplication
 
 import android.graphics.Color
-import android.os.Bundle
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import android.os.Bundle
 import kotlinx.android.synthetic.main.activity_main.*
+import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -12,11 +12,36 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        seekbar.setProgressListener {
-            Toast.makeText(this, it.toString(), Toast.LENGTH_SHORT).show()
+
+
+        triangleSeekbar.setProgressListener {
+            textView.text = "Current progress is $it"
         }
-        button.setOnClickListener {
-            seekbar.setSeekBarColor(Color.CYAN)
+
+
+
+        btnMakeSeekBar.setOnClickListener {
+            val rnd = Random()
+            val color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256))
+
+            triangleSeekbar.setSeekBarColor(color)
+        }
+
+
+        btnMakeProgress.setOnClickListener {
+            val rnd = Random()
+            val color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256))
+
+            triangleSeekbar.seekbarLoadingColor = color
+        }
+
+        btnShowProgress.setOnClickListener {
+            triangleSeekbar.isProgressVisible = !triangleSeekbar.isProgressVisible
+            if (triangleSeekbar.isProgressVisible) {
+                btnShowProgress.text = "Hide progress text on it"
+            } else {
+                btnShowProgress.text = "Show progress text on it"
+            }
         }
     }
 }
