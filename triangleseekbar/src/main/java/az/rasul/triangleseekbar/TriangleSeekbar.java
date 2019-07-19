@@ -218,43 +218,13 @@ public class TriangleSeekbar extends View implements View.OnTouchListener {
     }
 
 
-    public void setTextColor(int color) {
-        this.mTextColor = color;
-        mTextPaint.setColor(mTextColor);
-        invalidate();
-    }
-
-    public void setSeekBarColor(int color) {
-        this.mSeekbarColor = color;
-        mSeekbarPaint.setColor(mSeekbarColor);
-        invalidate();
-    }
-
-    public void setSeekbarLoadingColor(int color) {
-        this.mSeekbarLoadingColor = color;
-        mSeekbarLoadingPaint.setColor(mSeekbarLoadingColor);
-        invalidate();
-    }
-
-    public float getPercentage() {
-        return percentage;
-    }
-
     private float calculatePercentage() {
         double loadedArea = (mLoadedHeight * mLoadedWidth);
         int fullArea = (mHeight * mWidth);
         return (float) ((loadedArea / fullArea) * 100f);
     }
 
-    private void setIsProgressVisible(boolean isProgressVisible) {
-        this.mIsProgressVisible = isProgressVisible;
-    }
 
-    private void setProgressTextSize(float textSize) {
-        float scaledSizeInPixels = textSize * getResources().getDisplayMetrics().scaledDensity;
-        mTextPaint.setTextSize(scaledSizeInPixels);
-        this.mTextSize = textSize;
-    }
 
     public TriangleSeekbar setProgress(float progress) {
         if (progress >= 0.0 && progress <= 1.0) {
@@ -266,6 +236,67 @@ public class TriangleSeekbar extends View implements View.OnTouchListener {
         }
         return this;
     }
+    public float getPercentage() {
+        return percentage;
+    }
+
+
+    public int getTextColor() {
+        return mTextColor;
+    }
+
+    public void setTextColor(int color) {
+        this.mTextColor = color;
+        mTextPaint.setColor(mTextColor);
+        invalidate();
+    }
+
+    public int getSeekbarColor() {
+        return mSeekbarColor;
+    }
+
+    public void setSeekBarColor(int color) {
+        this.mSeekbarColor = color;
+        mSeekbarPaint.setColor(mSeekbarColor);
+        invalidate();
+    }
+
+
+    public int getSeekbarLoadingColor() {
+        return mSeekbarLoadingColor;
+    }
+
+    public void setSeekbarLoadingColor(int color) {
+        this.mSeekbarLoadingColor = color;
+        mSeekbarLoadingPaint.setColor(mSeekbarLoadingColor);
+        invalidate();
+    }
+
+    public boolean isProgressVisible() {
+        return mIsProgressVisible;
+    }
+
+    public void setProgressVisible(boolean mIsProgressVisible) {
+        this.mIsProgressVisible = mIsProgressVisible;
+    }
+
+
+    public float getTextSize() {
+        return mTextSize;
+    }
+
+    public void setTextSize(float mTextSize) {
+        this.mTextSize = mTextSize;
+    }
+
+    public void setProgressListener(ProgressListener mProgressListener) {
+        this.mProgressListener = mProgressListener;
+    }
+
+    public String getFontName() {
+        return mFontName;
+    }
+
 
     public void setFontName(String mFontName) {
         this.mFontName = mFontName;
@@ -277,28 +308,5 @@ public class TriangleSeekbar extends View implements View.OnTouchListener {
         invalidate();
     }
 
-    public int getTextColor() {
-        return mTextColor;
-    }
 
-    public int getSeekbarColor() {
-        return mSeekbarColor;
-    }
-
-    public int getSeekbarLoadingColor() {
-        return mSeekbarLoadingColor;
-    }
-
-    public boolean isProgressVisible() {
-        return mIsProgressVisible;
-    }
-
-    public float getTextSize() {
-        return mTextSize;
-    }
-
-
-    public void setProgressListener(ProgressListener mProgressListener) {
-        this.mProgressListener = mProgressListener;
-    }
 }
