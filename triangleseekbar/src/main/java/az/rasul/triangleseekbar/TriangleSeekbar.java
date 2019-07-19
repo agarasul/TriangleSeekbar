@@ -113,20 +113,34 @@ public class TriangleSeekbar extends View implements View.OnTouchListener {
         typedArray.recycle();
     }
 
-    @Override
-    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-        super.onSizeChanged(w, h, oldw, oldh);
-        mHeight = h;
-        mWidth = w;
 
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        mHeight = MeasureSpec.getSize(heightMeasureSpec);
+        mWidth = MeasureSpec.getSize(widthMeasureSpec);
+    }
+
+
+    @Override
+    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+        super.onLayout(changed, left, top, right, bottom);
         mSeekbarPath.moveTo(mWidth, 0);
         mSeekbarPath.lineTo(mWidth, mHeight);
         mSeekbarPath.lineTo(0, mHeight);
 
         if (percentage > 0) {
-            setProgress((int) percentage);
+            setProgress(percentage);
         }
     }
+
+//    @Override
+//    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+//        super.onSizeChanged(w, h, oldw, oldh);
+//        mHeight = h;
+//        mWidth = w;
+//
+//    }
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
@@ -160,7 +174,7 @@ public class TriangleSeekbar extends View implements View.OnTouchListener {
         mSeekbarLoadingPath.lineTo((float) mLoadedWidth, mHeight);
         mSeekbarLoadingPath.lineTo((float) mLoadedWidth, ((float) (mHeight - mLoadedHeight)));
 
-        percentage = getPercentage();
+        percentage = calculatePercentage();
 
         if (mProgressListener != null) {
             String aa = df.format(percentage);
@@ -228,8 +242,11 @@ public class TriangleSeekbar extends View implements View.OnTouchListener {
         invalidate();
     }
 
+    public float getPercentage() {
+        return percentage;
+    }
 
-    private float getPercentage() {
+    private float calculatePercentage() {
         double loadedArea = (mLoadedHeight * mLoadedWidth);
         int fullArea = (mHeight * mWidth);
         return (float) ((loadedArea / fullArea) * 100f);
@@ -247,7 +264,7 @@ public class TriangleSeekbar extends View implements View.OnTouchListener {
 
     public TriangleSeekbar setProgress(float progress) {
         if (progress >= 0.0 && progress <= 1.0) {
-            double newWidth = mWidth * Math.sqrt(progress);
+            double newWidth = mWidth * Math.sqrt(Math.round(progress * 100.0) / 100.0);
             buildLoadingTriangle((float) Math.ceil(newWidth));
             invalidate();
         } else {
