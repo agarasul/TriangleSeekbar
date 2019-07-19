@@ -12,7 +12,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        seekbar.setmProgressListener {
+        seekbar.setProgressListener {
             Toast.makeText(this, it.toString(), Toast.LENGTH_SHORT).show()
         }
         button.setOnClickListener {

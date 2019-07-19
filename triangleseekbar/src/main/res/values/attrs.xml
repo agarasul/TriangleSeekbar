@@ -9,10 +9,10 @@
         <attr name="showProgress" format="boolean"/>
 
         <attr name="progressTextPosition" format="enum">
-            <enum name="top_left" value="0"/>
-            <enum name="top_right" value="1"/>
-            <enum name="bottom_left" value="2"/>
-            <enum name="bottom_right" value="3"/>
+            <enum name="topLeft" value="0"/>
+            <enum name="topRight" value="1"/>
+            <enum name="bottomLeft" value="2"/>
+            <enum name="bottomRight" value="3"/>
             <enum name="center" value="4"/>
         </attr>
 

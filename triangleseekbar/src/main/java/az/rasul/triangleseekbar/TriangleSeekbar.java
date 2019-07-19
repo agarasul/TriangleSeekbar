@@ -6,8 +6,6 @@ import android.graphics.*;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
-import androidx.annotation.ColorRes;
-import androidx.core.content.ContextCompat;
 import com.rasul.triangleseekbar.R;
 
 import java.text.DecimalFormat;
@@ -57,7 +55,7 @@ public class TriangleSeekbar extends View implements View.OnTouchListener {
 
     private String mFontName;
 
-    private float mFontSize = 96f;
+    private float mTextSize = 96f;
 
     private float percentage = 0.0f;
 
@@ -95,7 +93,7 @@ public class TriangleSeekbar extends View implements View.OnTouchListener {
         mIsProgressVisible = typedArray.getBoolean(R.styleable.TriangleSeekbar_showProgress, false);
 
         mProgressPosition = Position.values()[(typedArray.getInt(R.styleable.TriangleSeekbar_progressTextPosition, 4))];
-        mFontSize = typedArray.getDimension(R.styleable.TriangleSeekbar_textFontSize, 96f);
+        mTextSize = typedArray.getDimension(R.styleable.TriangleSeekbar_textFontSize, 96f);
         mFontName = typedArray.getString(R.styleable.TriangleSeekbar_textFontName);
 
         percentage = typedArray.getFloat(R.styleable.TriangleSeekbar_progress, 0f);
@@ -104,7 +102,7 @@ public class TriangleSeekbar extends View implements View.OnTouchListener {
         mSeekbarLoadingPaint.setColor(mSeekbarLoadingColor);
         mTextPaint.setColor(mTextColor);
 
-        mTextPaint.setTextSize(mFontSize);
+        mTextPaint.setTextSize(mTextSize);
         if (mFontName != null) {
             try {
                 mTextPaint.setTypeface(Typeface.createFromAsset(context.getAssets(), "/fonts/$mFontName"));
@@ -237,8 +235,17 @@ public class TriangleSeekbar extends View implements View.OnTouchListener {
         return (float) ((loadedArea / fullArea) * 100f);
     }
 
+    private void setIsProgressVisible(boolean isProgressVisible) {
+        this.mIsProgressVisible = isProgressVisible;
+    }
 
-    public void setProgress(float progress) {
+    private void setProgressTextSize(float textSize) {
+        float scaledSizeInPixels = textSize * getResources().getDisplayMetrics().scaledDensity;
+        mTextPaint.setTextSize(scaledSizeInPixels);
+        this.mTextSize = textSize;
+    }
+
+    public TriangleSeekbar setProgress(float progress) {
         if (progress >= 0.0 && progress <= 1.0) {
             double newWidth = mWidth * Math.sqrt(progress);
             buildLoadingTriangle((float) Math.ceil(newWidth));
@@ -246,8 +253,38 @@ public class TriangleSeekbar extends View implements View.OnTouchListener {
         } else {
             throw new IllegalArgumentException("Progress must be between 0.0 and 1.0");
         }
+        return this;
     }
 
+    public void setFontName(String mFontName) {
+        this.mFontName = mFontName;
+        try {
+            mTextPaint.setTypeface(Typeface.createFromAsset(getContext().getAssets(), "/fonts/" + mFontName));
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Please check that you correctly set the font");
+        }
+        invalidate();
+    }
+
+    public int getTextColor() {
+        return mTextColor;
+    }
+
+    public int getSeekbarColor() {
+        return mSeekbarColor;
+    }
+
+    public int getSeekbarLoadingColor() {
+        return mSeekbarLoadingColor;
+    }
+
+    public boolean isProgressVisible() {
+        return mIsProgressVisible;
+    }
+
+    public float getTextSize() {
+        return mTextSize;
+    }
 
     @Override
     protected synchronized void onDraw(Canvas canvas) {
@@ -261,7 +298,7 @@ public class TriangleSeekbar extends View implements View.OnTouchListener {
     }
 
 
-    public void setmProgressListener(ProgressListener mProgressListener) {
+    public void setProgressListener(ProgressListener mProgressListener) {
         this.mProgressListener = mProgressListener;
     }
 }
