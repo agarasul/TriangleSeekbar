@@ -30,7 +30,7 @@
             android:layout_height="200dp"
             app:seekbarColor="#388E3C"
             app:progressTextPosition="center"
-            app:progress="0.4"
+            app:progress="0.51"
             app:showProgress="true"
             app:seekbarLoadingColor="#FFA000"
             app:layout_constraintEnd_toEndOf="parent"

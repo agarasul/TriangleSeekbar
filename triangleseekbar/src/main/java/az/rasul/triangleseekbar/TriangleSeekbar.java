@@ -24,9 +24,6 @@ public class TriangleSeekbar extends View implements View.OnTouchListener {
 
 
     private ProgressListener mProgressListener;
-    private DecimalFormatSymbols decimalFormatSymbols = new DecimalFormatSymbols(Locale.GERMAN);
-
-    private DecimalFormat df = new DecimalFormat("#.##", decimalFormatSymbols);
 
 
     private int mHeight = 0;
@@ -62,15 +59,11 @@ public class TriangleSeekbar extends View implements View.OnTouchListener {
 
     public TriangleSeekbar(Context context) {
         super(context);
-        decimalFormatSymbols.setDecimalSeparator('.');
-        df.setDecimalFormatSymbols(decimalFormatSymbols);
         setOnTouchListener(this);
     }
 
     public TriangleSeekbar(Context context, AttributeSet attrs) {
         super(context, attrs);
-        decimalFormatSymbols.setDecimalSeparator('.');
-        df.setDecimalFormatSymbols(decimalFormatSymbols);
         setOnTouchListener(this);
 
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.TriangleSeekbar);
@@ -134,14 +127,6 @@ public class TriangleSeekbar extends View implements View.OnTouchListener {
         }
     }
 
-//    @Override
-//    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-//        super.onSizeChanged(w, h, oldw, oldh);
-//        mHeight = h;
-//        mWidth = w;
-//
-//    }
-
     @Override
     public boolean onTouch(View v, MotionEvent event) {
 
@@ -157,6 +142,17 @@ public class TriangleSeekbar extends View implements View.OnTouchListener {
 
         invalidate();
         return true;
+    }
+
+    @Override
+    protected synchronized void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
+        canvas.drawPath(mSeekbarPath, mSeekbarPaint);
+        canvas.drawPath(mSeekbarLoadingPath, mSeekbarLoadingPaint);
+        if (mIsProgressVisible) {
+            canvas.drawText(Math.round(percentage) + " % ", mProgressX, mProgressY, mTextPaint);
+        }
+
     }
 
 
@@ -177,9 +173,7 @@ public class TriangleSeekbar extends View implements View.OnTouchListener {
         percentage = calculatePercentage();
 
         if (mProgressListener != null) {
-            String aa = df.format(percentage);
-
-            mProgressListener.onProgressChange(Float.parseFloat(aa));
+            mProgressListener.onProgressChange(percentage);
         }
 
         setProgressPosition(mProgressPosition);
@@ -264,7 +258,7 @@ public class TriangleSeekbar extends View implements View.OnTouchListener {
 
     public TriangleSeekbar setProgress(float progress) {
         if (progress >= 0.0 && progress <= 1.0) {
-            double newWidth = mWidth * Math.sqrt(Math.round(progress * 100.0) / 100.0);
+            double newWidth = mWidth * Math.sqrt(progress);
             buildLoadingTriangle((float) Math.ceil(newWidth));
             invalidate();
         } else {
@@ -301,17 +295,6 @@ public class TriangleSeekbar extends View implements View.OnTouchListener {
 
     public float getTextSize() {
         return mTextSize;
-    }
-
-    @Override
-    protected synchronized void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
-        canvas.drawPath(mSeekbarPath, mSeekbarPaint);
-        canvas.drawPath(mSeekbarLoadingPath, mSeekbarLoadingPaint);
-        if (mIsProgressVisible) {
-            canvas.drawText((int) percentage + " % ", mProgressX, mProgressY, mTextPaint);
-        }
-
     }
 
 
