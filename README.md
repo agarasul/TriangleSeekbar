@@ -58,6 +58,7 @@ triangleSeekbar.setProgressListener(new TriangleSeekbar.ProgressListener() {
 
 ### Installation
 ----
+
 Add it in your root build.gradle at the end of repositories:
 
 	allprojects {
@@ -66,7 +67,8 @@ Add it in your root build.gradle at the end of repositories:
 			maven { url 'https://jitpack.io' }
 		}
 	}
-Step 2. Add the dependency
+
+Add the dependency
 
 	dependencies {
 	        implementation 'com.github.agarasul:TriangleSeekbar:latest.version'
