@@ -9,10 +9,6 @@ import android.view.View;
 import com.rasul.triangleseekbar.R;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.util.Locale;
 
 public class TriangleSeekbar extends View implements View.OnTouchListener {
 
@@ -152,7 +148,7 @@ public class TriangleSeekbar extends View implements View.OnTouchListener {
         canvas.drawPath(mSeekbarPath, mSeekbarPaint);
         canvas.drawPath(mSeekbarLoadingPath, mSeekbarLoadingPaint);
         if (mIsProgressVisible) {
-            canvas.drawText(Math.round(percentage) + " % ", mProgressX, mProgressY, mTextPaint);
+            canvas.drawText(Math.round(percentage * 100f) + " % ", mProgressX, mProgressY, mTextPaint);
         }
 
     }
@@ -175,7 +171,7 @@ public class TriangleSeekbar extends View implements View.OnTouchListener {
         percentage = calculatePercentage();
 
         if (mProgressListener != null) {
-            mProgressListener.onProgressChange(Math.round(percentage));
+            mProgressListener.onProgressChange((percentage));
         }
 
         setProgressPosition(mProgressPosition);
@@ -223,11 +219,13 @@ public class TriangleSeekbar extends View implements View.OnTouchListener {
     private float calculatePercentage() {
         double loadedArea = (mLoadedHeight * mLoadedWidth);
         int fullArea = (mHeight * mWidth);
-        return (float) ((loadedArea / fullArea) * 100f);
+        BigDecimal bd = new BigDecimal((loadedArea / fullArea));
+        bd = bd.setScale(2, BigDecimal.ROUND_HALF_UP);
+        return bd.floatValue();
     }
 
 
-    public TriangleSeekbar setProgress(float progress) {
+    public void setProgress(float progress) {
         if (progress >= 0.0 && progress <= 1.0) {
             double newWidth = mWidth * Math.sqrt(progress);
             buildLoadingTriangle((float) Math.ceil(newWidth));
@@ -235,7 +233,6 @@ public class TriangleSeekbar extends View implements View.OnTouchListener {
         } else {
             throw new IllegalArgumentException("Progress must be between 0.0 and 1.0");
         }
-        return this;
     }
 
     public float getPercentage() {
