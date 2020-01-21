@@ -43,7 +43,7 @@ All of this attributes also can be changed from code with relevant methods.
 
 ```
 
-In your code you add add listener to progress change:
+In your code you add listener to progress change:
 
 ```java
 TriangleSeekbar triangleSeekbar = findViewById(R.id.triangleSeekbar);
